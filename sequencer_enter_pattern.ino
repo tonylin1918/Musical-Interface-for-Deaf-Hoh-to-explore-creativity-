@@ -187,6 +187,8 @@ void doButtons()
 void menubpmbutton()
 
 {
+
+  
   prevMenuBstate = menuBstate;
   menuBstate = digitalRead(menuButtonPin);
   if (prevMenuBstate == HIGH && menuBstate == LOW) {
@@ -257,6 +259,9 @@ void menubpmbutton()
 void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 -9-17
 
 {
+
+
+  
   prevresetbuttonstate = resetbuttonstate;
   resetbuttonstate = digitalRead(resetbuttonPin);
   if (prevresetbuttonstate == HIGH && resetbuttonstate == LOW) {
@@ -286,14 +291,7 @@ period = 0;
     // if only using first page then 16 bars
     c = 16;
     // also double speed 
-    if (period = 500)
-{period = 250;}
 
-if (period = 750)
-{period = 375;}
-
-if (period = 1000)
-{period = 500;}
   
 
 Serial.println ("16 Bar!");
@@ -358,6 +356,13 @@ Serial.println (period);
 void BPMchoices()
 
 {
+  if (c == 16 && period == 500)
+{period = 250;}
+  if (c == 16 && period == 1000)
+{period = 501;}
+  if (c == 16 && period == 750)
+{period = 375;}
+
 
   for (int i = 0; i < 8; i++) {
     int sensorValue = analogRead(A0);
