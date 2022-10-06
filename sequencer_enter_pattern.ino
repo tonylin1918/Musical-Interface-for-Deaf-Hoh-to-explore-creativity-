@@ -1,7 +1,7 @@
 unsigned long time;
 unsigned long startMillis;  //some global variables available anywhere in the program
 unsigned long currentMillis;
-unsigned long period = 1000;
+unsigned long period = 0;
 int countUp = 0;            //creates a variable integer called 'countUp'
 
 //Button/LED/Motor selection pin
@@ -23,17 +23,20 @@ unsigned long period1 = 80;
 int counting = 0;
 int menuButtonPin = 6;
 bool menuBstate = false;
-int prevMenuBstate = false; 
+int prevMenuBstate = false;
 
 int resetbuttonPin = 2;
 bool resetbuttonstate = false;
-int prevresetbuttonstate = false; 
+int prevresetbuttonstate = false;
 int counter1 = 0;
 
 int modebuttonpin = 4;
 bool modebuttontate = false;
-int prevmodebuttonstate = false; 
+int prevmodebuttonstate = false;
 int counter2 = 0;
+
+int      c = 8;
+
 
 // Bass, Snare, HHC, HHO , HITom
 int myARRAYbass[17] = {202, 149, 120, 110, 96, 83, 72, 68, 67, 65, 64, 62, 60, 58 , 55, 55};
@@ -59,7 +62,7 @@ unsigned long currentMillis1[8] = { 0, 0, 0, 0, 0, 0, 0, 0};  //some global vari
 
 
 
-int red_light_pin= 35;
+int red_light_pin = 35;
 int green_light_pin = 36;
 int blue_light_pin = 37;
 
@@ -78,7 +81,7 @@ void setup() {
   }
 
   pinMode(menuButtonPin, INPUT_PULLUP);
-  
+
   pinMode(resetbuttonPin, INPUT_PULLUP);
   pinMode(modebuttonpin, INPUT_PULLUP);
 
@@ -87,7 +90,7 @@ void setup() {
   pinMode(red_light_pin, OUTPUT);
   pinMode(green_light_pin, OUTPUT);
   pinMode(blue_light_pin, OUTPUT);
-  
+
 
 
 
@@ -106,42 +109,44 @@ void loop() {
 
 
 
-
   prevmodebuttonstate = modebuttontate;
   modebuttontate = digitalRead(modebuttonpin);
   if (prevmodebuttonstate == HIGH && modebuttontate == LOW) {
     counter2++;   //Adds 1 to the countUp int on every loop
   }
-    else {}
+  else {}
   // menu counter
   if (counter2 > 1) {
     counter2 = 0;
 
   }
-// write modeeeeeeeeeeeeeeee
- if ( counter2 == 0 )  {
-    Serial.println("MODE: Write ");
+  // write modeeeeeeeeeeeeeeee
+  if ( counter2 == 0 )  {
+    //  Serial.println("MODE: Write ");
 
-  // check the sequencer buttons for press
-doButtons();
-  
- }
+    // check the sequencer buttons for press
+    doButtons();
+    //8th bar or 16th bar
+    resetmode();
 
- if ( counter2 == 1 )  {
-    Serial.println("MODE: Play ");
 
-//Serial.println(counter);
-  // check the menu buttons for press
-  timeperperiod();
+  }
+  // play modeeeeeeeeeeeeeeee
 
- //Menu button switching
-  menubpmbutton();
- resetmode();
-  //menu BPM choices
-  BPMchoices();
-  //counter if = and led = then
-  motorvibrate();
- }
+  if ( counter2 == 1 )  {
+    //   Serial.println("MODE: Play ");
+    BPMchoices();
+
+    //Serial.println(counter);
+    // check the menu buttons for press
+    timeperperiod();
+
+    //Menu button switching
+    menubpmbutton();
+    //menu BPM choices
+    //counter if = and led = then
+    motorvibrate();
+  }
 
 
 }
@@ -199,7 +204,7 @@ void menubpmbutton()
       myARRAY1[index[i]] = myARRAYbass[index[i]];
       idexmax = 16;
       indexbiggest = 17;
-      }
+    }
     if ( counter == 1 )
 
 
@@ -234,7 +239,7 @@ void menubpmbutton()
 
 
     }
-    
+
     if ( counter == 5 )
     { //  Serial.println("HITom");
       myARRAY1[index[i]] = myARRAYHITom[index[i]];
@@ -249,42 +254,62 @@ void menubpmbutton()
 }
 
 
-  void  resetmode()
+void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 -9-17
 
 {
   prevresetbuttonstate = resetbuttonstate;
   resetbuttonstate = digitalRead(resetbuttonPin);
   if (prevresetbuttonstate == HIGH && resetbuttonstate == LOW) {
-    counter1++;   //Adds 1 to the countUp int on every loop
+    counter1++;
   }
-    else {}
+  else {}
   // menu counter
   if (counter1 > 1) {
     counter1 = 0;
 
   }
 
- if ( counter1 == 1 )  {
-  LEDstates[0] == LOW;
-  LEDstates[1] == LOW;
-  LEDstates[2] == LOW;
-  LEDstates[3] == LOW;
-  LEDstates[4] == LOW;  
-  LEDstates[5] == LOW;
-  LEDstates[6] == LOW;
-  LEDstates[7] == LOW;
-  analogWrite(motorPins[0], 0);
-  analogWrite(motorPins[1], 0);
-  analogWrite(motorPins[2], 0);
-  analogWrite(motorPins[3], 0);
-  analogWrite(motorPins[4], 0);
-  analogWrite(motorPins[5], 0);
-  analogWrite(motorPins[6], 0);
-  analogWrite(motorPins[7], 0);
+  if ( counter1 == 0 )  {
+    // if only using first page then 8 bars
+    Serial.println ("8 Bar!");
+
+    if (countUp >= 8) {
+      countUp = 0;    }
+        c = 8;
+    // RBG CHANGE COLOUR
+period = 0;
+  }
+
+
+
+  if ( counter1 == 1 )  {
+    // if only using first page then 16 bars
+    c = 16;
+    // also double speed 
+    if (period = 500)
+{period = 250;}
+
+if (period = 750)
+{period = 375;}
+
+if (period = 1000)
+{period = 500;}
+  
+
+Serial.println ("16 Bar!");
+  // RBG CHANGE COLOUR
+
+  
+  
+
 
   
   }
- } 
+
+
+
+}
+
 
 void timeperperiod()
 
@@ -300,6 +325,7 @@ void timeperperiod()
     if (currentMillis - startMillis >= period)  //test whether the period has elapsed
     {
 
+
       Serial.print("CurrentMillis: ");
       Serial.println(currentMillis);
       startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
@@ -308,11 +334,11 @@ void timeperperiod()
       //add counter to loop
 
       countUp++;                //Adds 1 to the countUp int on every loop
+Serial.println (period);
 
-      if (countUp >= 8) {
-        countUp = 0;
-
-      }
+  if (countUp >= c) {
+      countUp = 0;
+    }
       Serial.print("-Steps ");
       Serial.println(countUp);
       Serial.print("period: ");
@@ -321,7 +347,7 @@ void timeperperiod()
     else
     { analogWrite(LEDmenu, 0); // Turn the LED on
     }
-
+  
   }
 }
 
@@ -333,36 +359,38 @@ void BPMchoices()
 
 {
 
- for (int i = 0; i < 8; i++) {
-  int sensorValue = analogRead(A0);
-  // print out the value you read:
+  for (int i = 0; i < 8; i++) {
+    int sensorValue = analogRead(A0);
+    // print out the value you read:
 
-  if (  sensorValue < 341 && sensorValue > 0)
-  { //Serial.println("1");
-    //    Serial.println(" 60bpm");
-    period = 1000;
-    p = 1000;
-          speedperiod[i] = speedperiod1[i];
+    if (  sensorValue < 341 && sensorValue > 0)
+    { //Serial.println("1");
+      //    Serial.println(" 60bpm");
+      period = 1000;
+      p = 1000;
+      speedperiod[i] = speedperiod1[i];
 
-  }
-  if ( sensorValue >= 341 && sensorValue < 682)
-  { //Serial.println("2");
-    //       Serial.println(" 80bpm");
-    period = 750;
-    p = 750;
-          speedperiod[i] = speedperiod[i];
+    }
+    if ( sensorValue >= 341 && sensorValue < 682)
+    { //Serial.println("2");
+      //       Serial.println(" 80bpm");
+      period = 750;
+      p = 750;
+      speedperiod[i] = speedperiod[i];
 
 
-  }
-  if ( sensorValue >= 682 && sensorValue < 1023)
-  { //Serial.println("3");
-    //  Serial.println(" 120bpm");
-    period = 500;
-    p = 500;
+    }
+    if ( sensorValue >= 682 && sensorValue < 1023)
+    { //Serial.println("3");
+      //  Serial.println(" 120bpm");
+      period = 500;
+      p = 500;
       speedperiod[i] = speedperiod2[i];
 
+    }
   }
-}
+
+
 }
 void motorvibrate()
 
@@ -390,20 +418,24 @@ void motorvibrate()
   }
 
 
-{
+  {
     if (countUp == 0  && LEDstates[0] == LOW) {
-      RGB_color(0,0,0);  }
-     else {  RGB_color(255,255,255);  }
-   if (LEDstates[0] == HIGH) {
-     RGB_color(255,0,255);  }
-     else {
-  }
+      RGB_color(0, 0, 0);
+    }
+    else {
+      RGB_color(255, 255, 255);
+    }
+    if (LEDstates[0] == HIGH) {
+      RGB_color(255, 0, 255);
+    }
+    else {
+    }
   }
 }
 
 
 void RGB_color(int red_light_value, int green_light_value, int blue_light_value)
- {
+{
   analogWrite(red_light_pin, red_light_value);
   analogWrite(green_light_pin, green_light_value);
   analogWrite(blue_light_pin, blue_light_value);
