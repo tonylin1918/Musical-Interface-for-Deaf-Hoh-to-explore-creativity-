@@ -486,15 +486,24 @@ void motorvibrate()
 
 void  Ledstatewheninplaymode()
 
-{
+{ //lights all turn on white fix....
  for (int i = 0; i < 8; i++) {
        if (countUp == i  && LEDstates[i] == HIGH) {
  pixels.setPixelColor(i, pixels.Color(0, 150, 0 ));
     pixels.show();   // Send the updated pixel colors to the hardware.
-    }
-    else {
-  }
+       }
+       else {
+      
 }
+    
+         if (countUp == !i  && pixels.Color(0, 150, 0 ) && LEDstates[i] == HIGH)  {
+  pixels.show();   // Send the updated pixel colors to the hardware.
+pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
+ pixels.show();   // Send the updated pixel colors to the hardware.
+
+  }
+  
+}}
 
 
 
