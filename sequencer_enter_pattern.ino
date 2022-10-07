@@ -79,6 +79,14 @@ int blue_light_pin = 37;
 #define NUMPIXELS 5 // Popular NeoPixel ring size
 Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
+
+
+///// testing with an array see if it works to note down the on and off beats--------------------------------------------------------
+int number = 0;
+int anArray[16]; //an array capable of holding 20 entries numbered 0 to 19
+int arrayIndex = 0;
+
+
 void setup() {
 
   Serial.begin(115200);
@@ -139,7 +147,6 @@ void loop() {
     doButtons();
     //8th bar or 16th bar
     resetmode();
-
 
   }
   // play modeeeeeeeeeeeeeeee
@@ -305,11 +312,30 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
       if (LEDstates[i] == HIGH) {
         pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
         pixels.show();   // Send the updated pixel colors to the hardware.    };
+
+
+        // manybe write array of inputted 1-8 and then extract when going back into this mode
+
       }
       else {
         pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+
+        pixels.show();   // Send the updated pixel colors to the hardware.
       }
-      pixels.show();   // Send the updated pixel colors to the hardware.    }
+
+      if (LEDstates[i] == HIGH) {
+
+        Serial.print("order");
+        Serial.print(arrayIndex);
+        Serial.print("number entered");
+        anArray[arrayIndex] = i;
+        Serial.println(anArray[arrayIndex]);
+        //if the arrayIndex number and the number entered  so the count up is eauals to the anArray[arrayIndex]
+
+        arrayIndex++;
+      }
+
+
     }
   }
 
@@ -323,8 +349,11 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
 
 
 
-
   if ( counter1 == 1 )  {
+
+    //
+
+
     // if only using first page then 16 bars
     c = 16;
     // also double speed
@@ -333,7 +362,7 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
 
     //Can enter into part 2 of 9-16 button 1 = 9
 
-    // check for button push on each sequencer button 
+    // check for button push on each sequencer button
     for (int i = 8; i < 16; i++) {
 
       prevBstates[i] = Bstates[i];
@@ -350,23 +379,24 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
           Serial.println("LED is off");
         }
 
-         {  
+        {
 
           //-8 to get the orignial 0-7 numbers for led
           if (LEDstates[i] == HIGH) {
-            pixels.setPixelColor(i-8, pixels.Color(150, 150, 0 ));
+            pixels.setPixelColor(i - 8, pixels.Color(150, 150, 0 ));
             pixels.show();   // Send the updated pixel colors to the hardware.    };
           }
           else {
-            pixels.setPixelColor(i-8, pixels.Color(0 , 0, 0 ));
-                    pixels.show();   //(255,255,0) Send the updated pixel colors to the hardware.    }
-}
+            pixels.setPixelColor(i - 8, pixels.Color(0 , 0, 0 ));
+            pixels.show();   //(255,255,0) Send the updated pixel colors to the hardware.    }
+          }
         }
       }
     }
   }
-  
+
 }
+
 
 
 
@@ -509,7 +539,7 @@ void motorvibrate()
 
 void  Ledstatewheninplaymode()
 
-{ //lights all turn on white fix....
+{
   for (int i = 0; i < 8; i++) {
     if (countUp == i  && LEDstates[i] == HIGH) {
       pixels.setPixelColor(i, pixels.Color(0, 150, 0 ));
@@ -518,7 +548,7 @@ void  Ledstatewheninplaymode()
     else {
 
     }
-
+    //fix up turn green off when not on
     if (countUp == !i  && pixels.Color(0, 150, 0) && LEDstates[i] == HIGH)  {
       pixels.show();   // Send the updated pixel colors to the hardware.
       pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
