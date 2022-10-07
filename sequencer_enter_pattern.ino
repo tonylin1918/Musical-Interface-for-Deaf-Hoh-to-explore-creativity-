@@ -69,10 +69,20 @@ int blue_light_pin = 37;
 
 
 
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+ #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+// Which pin on the Arduino is connected to the NeoPixels?
+#define PIN        8 // On Trinket or Gemma, suggest changing this to 1
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS 5 // Popular NeoPixel ring size
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
 void setup() {
 
   Serial.begin(115200);
-
+pixels.begin();
 
   // setup each sequencer button
   for (int i = 0; i < 8; i++) {
@@ -147,8 +157,8 @@ void loop() {
     //menu BPM choices
     //counter if = and led = then
     motorvibrate();
-  }
-
+  Ledstatewheninplaymode();
+}
 
 }
 
@@ -174,13 +184,16 @@ void doButtons()
       Serial.println(i);
       LEDstates[i] = !LEDstates[i];
       digitalWrite(LEDpins[i], LEDstates[i]);
+     
       if (LEDstates[i] == HIGH) {
         Serial.println("LED is on");
+        
       } else {
         Serial.println("LED is off");
       }
     }
-  }
+  
+}
 }
 
 
@@ -273,6 +286,8 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
   if (counter1 > 1) {
     counter1 = 0;
 
+
+
   }
 
   if ( counter1 == 0 )  {
@@ -284,8 +299,20 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
         c = 8;
     // RBG CHANGE COLOUR
 period = 0;
+
+    for (int i = 0; i < 8; i++) {
+    if (LEDstates[i] == HIGH) {
+    pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
+    pixels.show();   // Send the updated pixel colors to the hardware.    };
+    }
+    else { pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));}
+    pixels.show();   // Send the updated pixel colors to the hardware.    }
+    }}
+     
+
+
   
-  }
+  
 
 
 
@@ -322,14 +349,8 @@ period = 0;
     
   }
   }
-
-
-  
   }
-
-
-
-}
+  }
 
 
 void timeperperiod()
@@ -463,7 +484,22 @@ void motorvibrate()
   }
 }
 
+void  Ledstatewheninplaymode()
 
+{
+ for (int i = 0; i < 8; i++) {
+       if (countUp == i  && LEDstates[i] == HIGH) {
+ pixels.setPixelColor(i, pixels.Color(0, 150, 0 ));
+    pixels.show();   // Send the updated pixel colors to the hardware.
+    }
+    else {
+  }
+}
+
+
+
+
+ 
 void RGB_color(int red_light_value, int green_light_value, int blue_light_value)
 {
   analogWrite(red_light_pin, red_light_value);
