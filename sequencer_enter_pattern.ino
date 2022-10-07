@@ -3,7 +3,6 @@ unsigned long startMillis;  //some global variables available anywhere in the pr
 unsigned long currentMillis;
 unsigned long period = 0;
 int countUp = 0;            //creates a variable integer called 'countUp'
-
 //Button/LED/Motor selection pin
 // initial button values
 int butonPins[16] = {10, 13, 16, 19, 22, 25, 28, 31 , 10, 13, 16, 19, 22, 25, 28, 31};
