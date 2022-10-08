@@ -198,6 +198,11 @@ void buttoninput()
         }            done++;
                     done1 = 0;
       }
+          
+      if (notes[0][i] == 1) {
+            digitalWrite(LEDpins[i], HIGH);
+          }
+          
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -209,6 +214,8 @@ void buttoninput()
       }
 
 
+
+          
       if (butonoroff[i] == true )
       { 
        
@@ -218,7 +225,7 @@ void buttoninput()
       if (butonoroff[i] == false && notes[0][i] == 1 )
       {
 notes[0][i] = 0;      }
-
+ 
     }
   
     if ( currEditBar == 1 ) {
@@ -232,7 +239,9 @@ notes[0][i] = 0;      }
         }            done1++;
                     done = 0;
       }
-    
+           if (notes[1][i] == 1) {
+            digitalWrite(LEDpins[i], HIGH);
+          }
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
