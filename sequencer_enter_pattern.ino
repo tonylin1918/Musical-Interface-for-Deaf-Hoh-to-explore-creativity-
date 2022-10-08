@@ -30,7 +30,6 @@ int resetbuttonPin = 2;
 bool resetbuttonstate = false;
 int prevresetbuttonstate = false;
 int counter1 = 0;
-
 int modebuttonpin = 4;
 bool modebuttontate = false;
 int prevmodebuttonstate = false;
