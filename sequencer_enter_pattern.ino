@@ -194,12 +194,32 @@ void doButtons()
 
       if (LEDstates[i] == HIGH) {
         Serial.println("LED is on");
+        Serial.print("order");
+        Serial.print(arrayIndex);
+        Serial.print("number entered");
+        anArray[arrayIndex] = i;
+       Serial.println(anArray[arrayIndex]);
+//if the arrayIndex number and the number entered  so the count up is eauals to the anArray[arrayIndex]
+
+        arrayIndex++;
+
 
       } else {
         Serial.println("LED is off");
       }
-    }
 
+      // Reset the index??
+     if (arrayIndex >15)
+     {arrayIndex = 0;}
+      
+    }
+    // if led low - idex Shuffle down all the entries one space so the unused one is at the end Decrement the count of entries
+if ( i == anArray[arrayIndex] && LEDstates[i] == LOW)
+{
+
+        Serial.println("yoooo");
+
+}
   }
 }
 
@@ -323,17 +343,7 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
         pixels.show();   // Send the updated pixel colors to the hardware.
       }
 
-      if (LEDstates[i] == HIGH) {
-
-        Serial.print("order");
-        Serial.print(arrayIndex);
-        Serial.print("number entered");
-        anArray[arrayIndex] = i;
-        Serial.println(anArray[arrayIndex]);
-        //if the arrayIndex number and the number entered  so the count up is eauals to the anArray[arrayIndex]
-
-        arrayIndex++;
-      }
+    
 
 
     }
