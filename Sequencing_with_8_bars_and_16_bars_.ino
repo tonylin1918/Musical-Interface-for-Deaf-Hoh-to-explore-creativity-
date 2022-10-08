@@ -148,7 +148,19 @@ void playNote()
 void barbutton()
 
 // cycle thru bars
-{ Serial.println(done1);
+{ 
+ Serial.print("BAR ");
+        Serial.print(currEditBar);
+        Serial.print(" NOTE: ");
+        Serial.print( notes[currEditBar][0]);
+        Serial.print( notes[currEditBar][1]);
+        Serial.print( notes[currEditBar][2]);
+        Serial.print( notes[currEditBar][3]);
+        Serial.print( notes[currEditBar][4]);
+        Serial.print( notes[currEditBar][5]);
+        Serial.print( notes[currEditBar][6]);
+        Serial.print( notes[currEditBar][7]);
+ Serial.println(" ");
 
   prevbarbuttonstate = barbuttonstate;
   barbuttonstate = digitalRead(barbuttonPin);
@@ -198,14 +210,14 @@ void buttoninput()
 
 
       if (butonoroff[i] == true )
-      { //Serial.println("HIGH");
+      { 
+       
         notes[0][i] = 1;
+        
       }
-      if (butonoroff[i] == false )
+      if (butonoroff[i] == false && notes[0][i] == 1 )
       {
-        //Serial.println("LOW");
-      }
-      notes[0][i] = 0;
+notes[0][i] = 0;      }
 
     }
   
@@ -235,12 +247,14 @@ void buttoninput()
       if (butonoroff1[i] == true )
       { //Serial.println("1 HIGH");
         notes[1][i] = 1;
+
+        
       }
-      if (butonoroff1[i] == false )
-      {
+      if (butonoroff1[i] == false && notes[1][i] == 1  )
+      {      notes[1][i] = 0;
+
         //  Serial.println("1 LOW");
       }
-      notes[1][i] = 0;
     }
   }
 }
