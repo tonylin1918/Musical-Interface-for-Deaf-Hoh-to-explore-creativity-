@@ -36,6 +36,9 @@ int currEditBar = 0;
 bool butonoroff[8] = {false};
 bool butonoroff1[8] = {false};
 
+int done = 0;
+int done1 = 0;
+
 void setup() {
   Serial.begin(115200);
 
@@ -145,11 +148,13 @@ void playNote()
 void barbutton()
 
 // cycle thru bars
-{
+{ Serial.println(done1);
+
   prevbarbuttonstate = barbuttonstate;
   barbuttonstate = digitalRead(barbuttonPin);
   if (prevbarbuttonstate == HIGH && barbuttonstate == LOW) {
     currEditBar++;   //Adds 1 to the currEditBar int on every loop
+
   }
   else {}
   if (currEditBar > 1) {
@@ -169,8 +174,18 @@ void buttoninput()
 
 
 {
-  for (int i = 0; i < 8; i++) {
-    if (notes[0]) {
+  for (int i = 0; i < 8; i++) { 
+
+    if (currEditBar == 0) {
+      if (done == 0) {
+         for (int i = 0; i < 8; i++) {
+          if (LEDpins[i], HIGH) {
+            digitalWrite(LEDpins[i], LOW);
+            //  Serial.print (done);
+          }
+        }            done++;
+                    done1 = 0;
+      }
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -181,22 +196,31 @@ void buttoninput()
         }
       }
 
-    }
-    if (butonoroff[i] == true )
-    { Serial.println("HIGH");
-      notes[0][i] = 1;
-    }
-    if (butonoroff[i] == false )
-    {
-      Serial.println("LOW");
-    }
-    notes[0][i] = 0;
 
+      if (butonoroff[i] == true )
+      { //Serial.println("HIGH");
+        notes[0][i] = 1;
+      }
+      if (butonoroff[i] == false )
+      {
+        //Serial.println("LOW");
+      }
+      notes[0][i] = 0;
 
-    if (notes[1]) {
-  for (int i = 0; i < 8; i++) {              // try clear led state to all low??????????
-   digitalWrite(LEDstates[i], LOW);
-}
+    }
+  
+    if ( currEditBar == 1 ) {
+      
+      if (done1 == 0) {
+         for (int i = 0; i < 8; i++) {
+          if (LEDpins[i], HIGH) {
+            digitalWrite(LEDpins[i], LOW);
+            //  Serial.print (done1);
+          }
+        }            done1++;
+                    done = 0;
+      }
+    
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -207,16 +231,16 @@ void buttoninput()
         }
       }
 
-    
-    if (butonoroff1[i] == true )
-    { Serial.println("1 HIGH");
-      notes[1][i] = 1;
+
+      if (butonoroff1[i] == true )
+      { //Serial.println("1 HIGH");
+        notes[1][i] = 1;
+      }
+      if (butonoroff1[i] == false )
+      {
+        //  Serial.println("1 LOW");
+      }
+      notes[1][i] = 0;
     }
-    if (butonoroff1[i] == false )
-    {
-      Serial.println("1 LOW");
-    }
-    notes[1][i] = 0;
   }
-}
 }
