@@ -30,6 +30,7 @@ int resetbuttonPin = 2;
 bool resetbuttonstate = false;
 int prevresetbuttonstate = false;
 int counter1 = 0;
+
 int modebuttonpin = 4;
 bool modebuttontate = false;
 int prevmodebuttonstate = false;
@@ -37,13 +38,17 @@ int counter2 = 0;
 
 int      c = 8;
 
+// beat experiences 
+int myARRAY1[11] = {217, 150, 115, 115, 114, 116, 119, 119, 0, 0, 0};
+int myARRAY2[11] = {140, 180, 100, 145, 253, 100, 235, 238, 0, 0, 0};
+int myARRAY3[11] = {60, 80, 100, 160, 250, 100, 80, 30, 0, 0, 0};
 
-// Bass, Snare, HHC, HHO , HITom
-int myARRAYbass[17] = {202, 149, 120, 110, 96, 83, 72, 68, 67, 65, 64, 62, 60, 58 , 55, 55};
-int myARRAYHHC[17] = {222, 43, 6, 3, 0, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
-int myARRAYHHO[17] = {222, 213, 250, 2, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
-int myARRAYHITom[17] = {120, 120, 120, 140, 106, 80, 58, 42, 31, 22, 16, 11, 7, 4, 2, 1, 0};
-int myARRAYsnare[17] = {143, 120, 120, 80, 40, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
+
+//// Bass, Snare, HHC, HHO , HITom
+//int myARRAYHHC[17] = {222, 43, 6, 3, 0, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
+//int myARRAYHHO[17] = {222, 213, 250, 2, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
+//int myARRAYHITom[17] = {120, 120, 120, 140, 106, 80, 58, 42, 31, 22, 16, 11, 7, 4, 2, 1, 0};
+//int myARRAYsnare[17] = {143, 120, 120, 80, 40, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
 int count[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
 int index[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -53,7 +58,6 @@ int speedperiod2[8] { 80, 80, 80, 80, 80, 80, 80, 80};
 int val = 0;
 int idexmax;
 int indexbiggest;
-int myARRAY1[11] = {217, 150, 115, 115, 114, 116, 119, 119, 87, 30, 0};
 
 unsigned long startMillis1[8] = { 0, 0, 0, 0, 0, 0, 0, 0};  //some global variables available anywhere in the program
 unsigned long currentMillis1[8] = { 0, 0, 0, 0, 0, 0, 0, 0};  //some global variables available anywhere in the program
@@ -105,12 +109,10 @@ void setup() {
 
 
   pinMode(LEDmenu, OUTPUT); // Declare the LED as an output
-  pinMode(red_light_pin, OUTPUT);
-  pinMode(green_light_pin, OUTPUT);
-  pinMode(blue_light_pin, OUTPUT);
 
+int x = 0;
 
-
+int inputtedarray1[16];       // trying to link counter to an array for playing this specific vibraiton of beat 
 
 }
 
@@ -191,6 +193,15 @@ void doButtons()
       LEDstates[i] = !LEDstates[i];
       digitalWrite(LEDpins[i], LEDstates[i]);
 
+
+    if ( counter == 0 )
+  /////////////////////////// and led inouted states is high writre an array of the hgih ones when the motor is going off when the array number matches the count number        myARRAY1[index[i]]; 
+
+
+
+
+
+
       if (LEDstates[i] == HIGH) {
         Serial.println("LED is on");
         Serial.print("order");
@@ -213,13 +224,21 @@ void doButtons()
       
     }
     // if led low - idex Shuffle down all the entries one space so the unused one is at the end Decrement the count of entries
-if ( i == anArray[arrayIndex] && LEDstates[i] == LOW)
-{
+if (LEDstates[i] == LOW)
+{ 
+        anArray[arrayIndex] = -1;
 
-        Serial.println("yoooo");
+      //  Serial.println("yoooo");
 
 }
+
+for(int i = 0; i < 16; i++)
+{
+ // Serial.println(anArray[i]);
+}
   }
+
+  
 }
 
 
@@ -228,7 +247,7 @@ void menubpmbutton()
 
 {
 
-
+                                     // testing different vibration expereinces 
   prevMenuBstate = menuBstate;
   menuBstate = digitalRead(menuButtonPin);
   if (prevMenuBstate == HIGH && menuBstate == LOW) {
@@ -236,60 +255,25 @@ void menubpmbutton()
   }
   else {}
   // menu counter
-  if (counter > 5) {
+  if (counter > 2) {
     counter = 0;
   }
-  for (int i = 0; i < 8; i++) { //Bass, Snare, HHC, HHO , HITom
+  for (int i = 0; i < 8; i++) {
 
     if ( counter == 0 )
-    { //Serial.println("Bass");
-      myARRAY1[index[i]] = myARRAYbass[index[i]];
-      idexmax = 16;
-      indexbiggest = 17;
+    {
+     myARRAY1[index[i]];
     }
     if ( counter == 1 )
-
-
-    { // Serial.println("Bass");
-      myARRAY1[index[i]] = myARRAYbass[index[i]];
-      idexmax = 16;
-      indexbiggest = 17;
+    { 
+     myARRAY1[index[i]] = myARRAY2[index[i]];
     }
     if ( counter == 2 )
-
-
     { //Serial.println("Snare");
-      myARRAY1[index[i]] = myARRAYsnare[index[i]];
-      idexmax = 16;
-      indexbiggest = 17;
+     myARRAY1[index[i]] = myARRAY3[index[i]];
     }
 
-    if ( counter == 3)
-
-
-    { // Serial.println("HHC");
-      myARRAY1[index[i]] = myARRAYHHC[index[i]];
-      idexmax = 16;
-      indexbiggest = 17;
-
-    }
-    if ( counter == 4 )
-    { //  Serial.println("HHO");
-      myARRAY1[index[i]] = myARRAYHHO[index[i]];
-      idexmax = 16;
-      indexbiggest = 17;
-
-
-    }
-
-    if ( counter == 5 )
-    { //  Serial.println("HITom");
-      myARRAY1[index[i]] = myARRAYHITom[index[i]];
-      idexmax = 16;
-      indexbiggest = 17;
-
-
-    }
+   
   }
 
 
@@ -330,7 +314,7 @@ void  resetmode()  // use this as creating 8 bar and 16 bars swappping from 1-8 
     for (int i = 0; i < 8; i++) {
       if (LEDstates[i] == HIGH) {
         pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.    };
+        pixels.show();   // Send the updated pixel colors to the hardware.   
 
 
         // manybe write array of inputted 1-8 and then extract when going back into this mode
@@ -529,21 +513,6 @@ void motorvibrate()
       analogWrite(motorPins[i], 0);
     }
   }
-
-
-  {
-    if (countUp == 0  && LEDstates[0] == LOW) {
-      RGB_color(0, 0, 0);
-    }
-    else {
-      RGB_color(255, 255, 255);
-    }
-    if (LEDstates[0] == HIGH) {
-      RGB_color(255, 0, 255);
-    }
-    else {
-    }
-  }
 }
 
 void  Ledstatewheninplaymode()
@@ -571,10 +540,3 @@ void  Ledstatewheninplaymode()
 
 
 
-
-void RGB_color(int red_light_value, int green_light_value, int blue_light_value)
-{
-  analogWrite(red_light_pin, red_light_value);
-  analogWrite(green_light_pin, green_light_value);
-  analogWrite(blue_light_pin, blue_light_value);
-}
