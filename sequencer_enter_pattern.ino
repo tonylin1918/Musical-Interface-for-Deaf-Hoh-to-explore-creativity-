@@ -10,7 +10,7 @@ int butonPins[16] = {10, 13, 16, 19, 22, 25, 28, 31 , 10, 13, 16, 19, 22, 25, 28
 int LEDpins[16] = {11, 14, 17, 20, 23, 26, 29, 32, 11, 14, 17, 20, 23, 26, 29, 32};
 bool LEDstates[16] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
 bool Bstates[16] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
-bool prevBstates[16] = {false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false};
+bool prevBstates[16] = {false};
 int motorPins[16] = {12, 15, 18, 21, 24, 27, 30, 33, 12, 15, 18, 21, 24, 27, 30, 33 };
 
 
@@ -49,8 +49,8 @@ int myARRAY3[11] = {60, 80, 100, 160, 250, 100, 80, 30, 0, 0, 0};
 //int myARRAYHHO[17] = {222, 213, 250, 2, 0, 0, 0, 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
 //int myARRAYHITom[17] = {120, 120, 120, 140, 106, 80, 58, 42, 31, 22, 16, 11, 7, 4, 2, 1, 0};
 //int myARRAYsnare[17] = {143, 120, 120, 80, 40, 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0, 0 , 0 , 0};
-int count[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
-int index[8] = { 0, 0, 0, 0, 0, 0, 0, 0};
+int count[8] = {0};
+int index[8] = {0};
 
 int speedperiod[8] { 80, 80, 80, 80, 80, 80, 80, 80};
 int speedperiod1[8] { 80, 80, 80, 80, 80, 80, 80, 80};
@@ -86,7 +86,7 @@ Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 ///// testing with an array see if it works to note down the on and off beats--------------------------------------------------------
 int number = 0;
-int anArray[16]; //an array capable of holding 20 entries numbered 0 to 19
+int anArray[16] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}; //an array capable of holding 20 entries numbered 0 to 19
 int arrayIndex = 0;
 
 
@@ -203,19 +203,19 @@ void doButtons()
 
 
       if (LEDstates[i] == HIGH) {
-        Serial.println("LED is on");
-        Serial.print("order");
-        Serial.print(arrayIndex);
-        Serial.print("number entered");
+//        Serial.println("LED is on");
+//        Serial.print("order");
+//        Serial.print(arrayIndex);
+//        Serial.print("number entered");
         anArray[arrayIndex] = i;
-       Serial.println(anArray[arrayIndex]);
+//       Serial.println(anArray[arrayIndex]);
 //if the arrayIndex number and the number entered  so the count up is eauals to the anArray[arrayIndex]
 
         arrayIndex++;
 
 
       } else {
-        Serial.println("LED is off");
+//        Serial.println("LED is off");
       }
 
       // Reset the index??
@@ -224,17 +224,18 @@ void doButtons()
       
     }
     // if led low - idex Shuffle down all the entries one space so the unused one is at the end Decrement the count of entries
-if (LEDstates[i] == LOW)
+if (LEDstates[i] == LOW && prevBstates[i] == LOW && Bstates[i] == HIGH && i < 8)
 { 
+ // arrayIndex = arrayIndex -1;        repreats a -1 which is inaccurate it should only be once to move the position back 
         anArray[arrayIndex] = -1;
 
-      //  Serial.println("yoooo");
+        Serial.println("yoooo");
 
 }
 
 for(int i = 0; i < 16; i++)
 {
- // Serial.println(anArray[i]);
+  Serial.print(anArray[i]);
 }
   }
 
@@ -531,7 +532,6 @@ void  Ledstatewheninplaymode()
       pixels.show();   // Send the updated pixel colors to the hardware.
       pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
       pixels.show();   // Send the updated pixel colors to the hardware.
-
     }
 
   }
