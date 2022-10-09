@@ -38,14 +38,19 @@ int done1 = 0;
 int done2 = 0;
 
 int myARRAY1[11] = {217, 150, 115, 115, 114, 116, 119, 119, 0, 0, 0};
-unsigned long startMillis1[8] = {0};  //some global variables available anywhere in the program
 unsigned long currentMillis1[8] = {0};  //some global variables available anywhere in the program
+unsigned long startMillis1[8] = {0};  //some global variables available anywhere in the program
 int count[8] = {0};
 int index[8] = {0};
 int motorPins[8] = {12, 15, 18, 21, 24, 27, 30, 33};
-int speedperiod[8] { 40, 40, 40, 40, 40, 40, 40, 40};
-
-
+ int speedperiod[NUM_BARS][NUM_NOTES] = {
+  {40, 40, 40, 40, 40, 40, 40, 40},    /*  initializers for row indexed by 0 */
+  {40, 40, 40, 40, 40, 40, 40, 40}     /*  initializers for row indexed by 1 */
+};
+ int startMillis[NUM_BARS][NUM_NOTES] = {
+  {0, 0, 0, 0, 0, 0, 0, 0},    /*  initializers for row indexed by 0 */
+  {0, 0, 0, 0, 0, 0, 0, 0}     /*  initializers for row indexed by 1 */
+};
 void setup() {
   Serial.begin(115200);
 
@@ -115,10 +120,7 @@ void updateTimeStep()
       Serial.print(" note: ");
       Serial.println(currNote);
     }
-    {for (int x = 0; x < 11; x++) {
-        index[x] = 0;
-      analogWrite(motorPins[currBar], 0);
-     }}
+  
   }
 
 }
@@ -149,57 +151,44 @@ void lightNote()
 {
    if (notes[currBar][currNote] > 0){
 if (done2 == 0) {
-         for (int i = 0; i < 8; i++) {
+        { for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
-                Serial.println(currNote);
-
           }
-        }            done2++;            
-      
+        } }           done2++;            
         }    digitalWrite(LEDpins[currNote], HIGH);
 
 done2 = 0; 
-
    }
   else {     
            for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
+
              }
           }
         }                 
         
  }
 
- void playNote()
-{           
-
-  if(notes[currBar][currNote] > 0) {
- Serial.println("HI");
- for (int i = 0; i < 8; i++) {
-        currentMillis1[i] = millis();
-if (millis() - startMillis1[notes[currBar][currNote]] < speedperiod[notes[currBar][currNote]])  //test whether the period has elapsed
-{
-        startMillis1[notes[currBar][currNote]] = millis();
-        count[i] = index[i];
-        analogWrite(motorPins[currNote], myARRAY1[index[i]]);
-        index[i]++;
-        if(showDebug) {
-          Serial.println (motorPins[currNote]);
-        }
-      }
-      
-      if ( index[i] > 10) {
-        index[i] = 11;
+void playNote()
+{ 
+        Serial.println(currNote);
+  if(notes[currBar][0] == 1 && LEDstates[0] == HIGH && currNote == 0) {
+        analogWrite(motorPins[0], 80);
       }
       else {
-        index[i] = 0;
-        analogWrite(motorPins[currNote], 0);
+        analogWrite(motorPins[0], 0);
       }
-  }
+        if(notes[currBar][1] == 1 && LEDstates[1] == HIGH && currNote == 1) {
+        analogWrite(motorPins[1], 80);
+      }
+      else {
+        analogWrite(motorPins[1], 0);
+      }
+      
 }
-}
+
 
 void barbutton()
 
