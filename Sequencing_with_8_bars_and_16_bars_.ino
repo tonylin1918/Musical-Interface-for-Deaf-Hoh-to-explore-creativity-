@@ -51,8 +51,25 @@ int motorPins[8] = {12, 15, 18, 21, 24, 27, 30, 33};
   {0, 0, 0, 0, 0, 0, 0, 0},    /*  initializers for row indexed by 0 */
   {0, 0, 0, 0, 0, 0, 0, 0}     /*  initializers for row indexed by 1 */
 };
+
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+#include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+#endif
+// Which pin on the Arduino is connected to the NeoPixels?
+#define PIN        8 
+#define PIN1        9
+// How many NeoPixels are attached to the Arduino?
+#define NUMPIXELS1 3 // Popular NeoPixel ring size
+#define NUMPIXELS 8 // Popular NeoPixel ring size
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels1(NUMPIXELS1, PIN1, NEO_GRB + NEO_KHZ800);
+
+
+
 void setup() {
   Serial.begin(115200);
+  pixels.begin();
 
   // calculate the period based on Beats Per Minute (BPM)
   period = (60.0f / bpm) * 1000;
@@ -154,19 +171,29 @@ if (done2 == 0) {
         { for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
+            pixels.clear();
           }
         } }           done2++;            
         }    digitalWrite(LEDpins[currNote], HIGH);
-
+  if (currBar == 0){
+  pixels.setPixelColor(currNote, pixels.Color(0, 150, 0 ));
+        pixels.show();   // Send the updated pixel colors to the hardware.   
+        }
+    if (currBar == 1){
+  pixels.setPixelColor(currNote, pixels.Color(150, 0, 0 ));
+        pixels.show();   // Send the updated pixel colors to the hardware.   
+  }
 done2 = 0; 
    }
   else {     
            for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
-            digitalWrite(LEDpins[i], LOW);
+            digitalWrite(LEDpins[currNote], LOW);
+           pixels.clear();
 
              }
           }
+          
         }                 
         
  }
@@ -238,16 +265,27 @@ void buttoninput()
          for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
-            //  Serial.print (done);
-          }
-        }            done++;
-                    done1 = 0;
+   pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));  
+          pixels.show();           }
+        }  
+        done++;
       }
+       done1 = 0;
+      
           
       if (notes[0][i] == 1) {
             digitalWrite(LEDpins[i], HIGH);
           }
-          
+            for (int i = 0; i < 8; i++) {
+      if (butonoroff[i] == HIGH) {
+        pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
+        pixels.show();   // Send the updated pixel colors to the hardware.   
+      }
+      else {
+        pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+        pixels.show();   // Send the updated pixel colors to the hardware.
+      }
+    }
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -257,8 +295,6 @@ void buttoninput()
           butonoroff[i] = ! butonoroff[i];
         }
       }
-
-
 
           
       if (butonoroff[i] == true )
@@ -279,14 +315,24 @@ notes[0][i] = 0;      }
          for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
-            //  Serial.print (done1);
-          }
-        }            done1++;
+   pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));  
+          pixels.show();           }
+        }           done1++;}
                     done = 0;
-      }
+      
            if (notes[1][i] == 1) {
             digitalWrite(LEDpins[i], HIGH);
           }
+         for (int i = 0; i < 8; i++) {
+      if (butonoroff1[i] == HIGH) {
+        pixels.setPixelColor(i, pixels.Color(150, 150, 0 ));
+        pixels.show();   // Send the updated pixel colors to the hardware.   
+      }
+      else {
+        pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+        pixels.show();   // Send the updated pixel colors to the hardware.
+      }
+    }
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -296,18 +342,12 @@ notes[0][i] = 0;      }
           butonoroff1[i] = ! butonoroff1[i];
         }
       }
-
-
       if (butonoroff1[i] == true )
       { //Serial.println("1 HIGH");
-        notes[1][i] = 1;
-
-        
+        notes[1][i] = 1;  
       }
       if (butonoroff1[i] == false && notes[1][i] == 1  )
       {      notes[1][i] = 0;
-
-        //  Serial.println("1 LOW");
       }
     }
   }
