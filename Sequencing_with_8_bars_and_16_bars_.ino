@@ -171,34 +171,35 @@ done2 = 0;
         }                 
         
  }
-void playNote()
 
+ void playNote()
+{           
 
-{
- 
-      if (notes[currBar][currNote] > 0)
- {
+  if(notes[currBar][currNote] > 0) {
+ Serial.println("HI");
  for (int i = 0; i < 8; i++) {
-      currentMillis1[i] = millis();
-      if (currentMillis1[i] - startMillis1[i] >= speedperiod[i])  //test whether the period has elapsed
-      {
-        startMillis1[i] = currentMillis1[i];  //IMPORTANT to save the start time of the current LED state.
+        currentMillis1[i] = millis();
+if (millis() - startMillis1[notes[currBar][currNote]] < speedperiod[notes[currBar][currNote]])  //test whether the period has elapsed
+{
+        startMillis1[notes[currBar][currNote]] = millis();
         count[i] = index[i];
         analogWrite(motorPins[currNote], myARRAY1[index[i]]);
         index[i]++;
-        Serial.print ("motor = ");
-        Serial.println (myARRAY1[index[i]]);
+        if(showDebug) {
+          Serial.println (motorPins[currNote]);
+        }
       }
+      
       if ( index[i] > 10) {
-        index[i] = 0;
+        index[i] = 11;
       }
-    else {
-      index[i] = 0;
-      analogWrite(motorPins[currNote], 0);
-    }
+      else {
+        index[i] = 0;
+        analogWrite(motorPins[currNote], 0);
+      }
   }
-}}
-
+}
+}
 
 void barbutton()
 
