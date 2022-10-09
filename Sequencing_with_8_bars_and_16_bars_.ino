@@ -38,6 +38,7 @@ bool butonoroff1[8] = {false};
 
 int done = 0;
 int done1 = 0;
+int done2 = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -128,11 +129,31 @@ void updateNotes()
 
     }
     newStep = false;
-
+    lightNote();
     playNote();
+    
   }
 }
+void lightNote()
+{
+   if (notes[currBar][currNote] > 0){
+if (done2 == 0) {
+         for (int i = 0; i < 8; i++) {
+          if (LEDpins[i], HIGH) {
+            digitalWrite(LEDpins[i], LOW);
+              Serial.print (done2);
+          }
+        }            done2++;            
+      
+        }    digitalWrite(LEDpins[currNote], HIGH);
 
+done2 = 0; 
+   }
+  else {     
+          
+        }                 
+        
+ }
 void playNote()
 {
   if (notes[currBar][currNote] > 0)
@@ -149,18 +170,18 @@ void barbutton()
 
 // cycle thru bars
 { 
- Serial.print("BAR ");
-        Serial.print(currEditBar);
-        Serial.print(" NOTE: ");
-        Serial.print( notes[currEditBar][0]);
-        Serial.print( notes[currEditBar][1]);
-        Serial.print( notes[currEditBar][2]);
-        Serial.print( notes[currEditBar][3]);
-        Serial.print( notes[currEditBar][4]);
-        Serial.print( notes[currEditBar][5]);
-        Serial.print( notes[currEditBar][6]);
-        Serial.print( notes[currEditBar][7]);
- Serial.println(" ");
+// Serial.print("BAR ");
+//        Serial.print(currEditBar);
+//        Serial.print(" NOTE: ");
+//        Serial.print( notes[currEditBar][0]);
+//        Serial.print( notes[currEditBar][1]);
+//        Serial.print( notes[currEditBar][2]);
+//        Serial.print( notes[currEditBar][3]);
+//        Serial.print( notes[currEditBar][4]);
+//        Serial.print( notes[currEditBar][5]);
+//        Serial.print( notes[currEditBar][6]);
+//        Serial.print( notes[currEditBar][7]);
+// Serial.println(" ");
 
   prevbarbuttonstate = barbuttonstate;
   barbuttonstate = digitalRead(barbuttonPin);
