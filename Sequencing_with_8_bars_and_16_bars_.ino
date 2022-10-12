@@ -191,11 +191,24 @@ void updateNotes()
     newStep = false;
     lightNote();
     playVibration();
+    countLight();
+    
 
   }
 
   updateVibration();
 }
+
+
+void countLight()
+
+{
+if (notes[currBar][currNote] ==  0){
+     pixels.setPixelColor(currNote, pixels.Color(20, 20, 20 ));
+     pixels.show();   // Send the updated pixel colors to the hardware.
+}
+}
+     
 void lightNote()
 {
   if (notes[currBar][currNote] > 0) {
@@ -248,6 +261,7 @@ void updateVibration()
     {
       vibrationStatus[currBar][i] = 0;
     } else if(vibrationStatus[currBar][i] == 1) {
+      
       digitalWrite(motorPins[i],HIGH);
     } else {
       digitalWrite(motorPins[i],LOW);
