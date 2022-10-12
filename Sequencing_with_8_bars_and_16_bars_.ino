@@ -53,7 +53,16 @@ int done = 0;
 int done1 = 0;
 int done2 = 0;
 
-int myARRAY1[11] = {217, 150, 115, 115, 114, 116, 119, 119, 0, 0, 0};
+#define NUM_SEQUENCE 5
+#define NUM_BEAT 11
+int myARRAY1[NUM_SEQUENCE][NUM_BEAT]  = {
+  {217, 150, 115, 115, 114, 116, 119, 119, 0, 0, 0},
+  {120, 150, 255, 255, 110, 80, 100, 255, 60, 0, 0},
+  {80, 100, 120, 180, 255, 255, 100, 80, 0, 0, 0},
+{255, 230, 200, 180, 0, 0, 0, 0, 0, 0, 0},
+{0, 0, 0, 0, 140, 255, 180, 120, 80 , 0, 0}
+};
+
 unsigned long currentMillis1[8] = {0};  //some global variables available anywhere in the program
 unsigned long startMillis1[8] = {0};  //some global variables available anywhere in the program
 int count[8] = {0};
@@ -86,6 +95,7 @@ Adafruit_NeoPixel pixels1(NUMPIXELS1, PIN1, NEO_GRB + NEO_KHZ800);
 void setup() {
   Serial.begin(115200);
   pixels.begin();
+  pixels1.begin();
 
   // calculate the period based on Beats Per Minute (BPM)
   period = (60.0f / bpm) * 1000;
@@ -123,11 +133,15 @@ void loop() {
   }
   // write modeeeeeeeeeeeeeeee
   if ( counter2 == 0 )  {
+     pixels1.setPixelColor(0, pixels1.Color(235,50,50));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
     barbutton();
     buttoninput();
   }
   // Play mode
   if ( counter2 == 1 )  {
+     pixels1.setPixelColor(0, pixels1.Color(50,205,50 ));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
     updateBPM();
     updateTimeStep();
     updateNotes();
@@ -136,12 +150,12 @@ void loop() {
 
 void updateBPM()
 {
- int val = analogRead(A0);
- Serial.println (val);
+  int val = analogRead(A0);
+ // Serial.println (val);
   val = map(val, 0, 1023, 60, 240);
- bpm = val;
+  bpm = val;
 
-   // calculate the period based on Beats Per Minute (BPM)
+  // calculate the period based on Beats Per Minute (BPM)
   period = (60.0f / bpm) * 1000;
   Serial.print("period = ");
   Serial.println(period);
@@ -192,7 +206,7 @@ void updateNotes()
     lightNote();
     playVibration();
     countLight();
-    
+
 
   }
 
@@ -203,12 +217,12 @@ void updateNotes()
 void countLight()
 
 {
-if (notes[currBar][currNote] ==  0){
-     pixels.setPixelColor(currNote, pixels.Color(20, 20, 20 ));
-     pixels.show();   // Send the updated pixel colors to the hardware.
+  if (notes[currBar][currNote] ==  0) {
+    pixels.setPixelColor(currNote, pixels.Color(20, 20, 20 ));
+    pixels.show();   // Send the updated pixel colors to the hardware.
+  }
 }
-}
-     
+
 void lightNote()
 {
   if (notes[currBar][currNote] > 0) {
@@ -246,27 +260,27 @@ void lightNote()
 
 void playVibration()
 {
-if (notes[currBar][currNote] > 0) {
-  vibrationStatus[currBar][currNote] = 1;
-  noteTimer[currBar][currNote] = millis();
-}
+  if (notes[currBar][currNote] > 0) {
+    vibrationStatus[currBar][currNote] = 1;
+    noteTimer[currBar][currNote] = millis();
+  }
 
 }
 
 void updateVibration()
 {
-  for(int i=0; i < NUM_NOTES; i++)
+  for (int i = 0; i < NUM_NOTES; i++)
   {
-    if((vibrationStatus[currBar][i] == 1) && (millis() - noteTimer[currBar][i] >= noteDuration[currBar][i]))
+    if ((vibrationStatus[currBar][i] == 1) && (millis() - noteTimer[currBar][i] >= noteDuration[currBar][i]))
     {
       vibrationStatus[currBar][i] = 0;
-    } else if(vibrationStatus[currBar][i] == 1) {
-      
-      digitalWrite(motorPins[i],HIGH);
+    } else if (vibrationStatus[currBar][i] == 1) {
+
+      digitalWrite(motorPins[i], HIGH);
     } else {
-      digitalWrite(motorPins[i],LOW);
+      digitalWrite(motorPins[i], LOW);
     }
-  }  
+  }
 }
 
 
@@ -299,10 +313,14 @@ void barbutton()
   }
   if ( currEditBar == 0 )
   { notes[NUM_BARS][NUM_NOTES] = notes[0][NUM_NOTES];
+   pixels1.setPixelColor(1, pixels1.Color(150,150,150 ));
+   pixels1.show();   // Send the updated pixel colors to the hardware.
 
   }
   if ( currEditBar == 1 )
   { notes[NUM_BARS][NUM_NOTES] = notes[1][NUM_NOTES];
+     pixels1.setPixelColor(1, pixels1.Color(150,150,0 ));
+
   }
 }
 
