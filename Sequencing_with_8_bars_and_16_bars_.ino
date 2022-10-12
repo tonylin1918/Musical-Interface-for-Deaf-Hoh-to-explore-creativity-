@@ -46,6 +46,12 @@ int barbuttonPin = 3;
 bool barbuttonstate = false;
 int prevbarbuttonstate = false;
 int currEditBar = 0;
+
+int musicPin = 4;
+bool musicstate = false;
+int prevmusicstate = false;
+int music = 0;
+
 bool butonoroff[8] = {false};
 bool butonoroff1[8] = {false};
 
@@ -53,14 +59,14 @@ int done = 0;
 int done1 = 0;
 int done2 = 0;
 
-#define NUM_SEQUENCE 5
-#define NUM_BEAT 11
-int myARRAY1[NUM_SEQUENCE][NUM_BEAT]  = {
+#define NUM_INSTRUMENT 5
+#define NUM_VALUES 11
+int vibrationData[NUM_INSTRUMENT][NUM_VALUES]  = {
   {217, 150, 115, 115, 114, 116, 119, 119, 0, 0, 0},
   {120, 150, 255, 255, 110, 80, 100, 255, 60, 0, 0},
   {80, 100, 120, 180, 255, 255, 100, 80, 0, 0, 0},
-{255, 230, 200, 180, 0, 0, 0, 0, 0, 0, 0},
-{0, 0, 0, 0, 140, 255, 180, 120, 80 , 0, 0}
+  {255, 230, 200, 180, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 140, 255, 180, 120, 80 , 0, 0}
 };
 
 unsigned long currentMillis1[8] = {0};  //some global variables available anywhere in the program
@@ -117,6 +123,9 @@ void setup() {
 
   //Bar pin input
   pinMode(barbuttonPin, INPUT_PULLUP);
+
+  //Choosing music instruments
+  pinMode(musicPin, INPUT_PULLUP);
 }
 
 void loop() {
@@ -133,14 +142,15 @@ void loop() {
   }
   // write modeeeeeeeeeeeeeeee
   if ( counter2 == 0 )  {
-     pixels1.setPixelColor(0, pixels1.Color(235,50,50));
+    pixels1.setPixelColor(0, pixels1.Color(235, 50, 50));
     pixels1.show();   // Send the updated pixel colors to the hardware.
     barbutton();
     buttoninput();
+    instrumentChoice();
   }
   // Play mode
   if ( counter2 == 1 )  {
-     pixels1.setPixelColor(0, pixels1.Color(50,205,50 ));
+    pixels1.setPixelColor(0, pixels1.Color(50, 205, 50 ));
     pixels1.show();   // Send the updated pixel colors to the hardware.
     updateBPM();
     updateTimeStep();
@@ -151,7 +161,7 @@ void loop() {
 void updateBPM()
 {
   int val = analogRead(A0);
- // Serial.println (val);
+  // Serial.println (val);
   val = map(val, 0, 1023, 60, 240);
   bpm = val;
 
@@ -271,14 +281,19 @@ void updateVibration()
 {
   for (int i = 0; i < NUM_NOTES; i++)
   {
-    if ((vibrationStatus[currBar][i] == 1) && (millis() - noteTimer[currBar][i] >= noteDuration[currBar][i]))
+    unsigned int timer = millis() - noteTimer[currBar][i];
+    if ((vibrationStatus[currBar][i] == 1) && (timer >= noteDuration[currBar][i]))
     {
       vibrationStatus[currBar][i] = 0;
     } else if (vibrationStatus[currBar][i] == 1) {
+      unsigned int period = noteDuration[currBar][i] / NUM_VALUES;
 
-      digitalWrite(motorPins[i], HIGH);
+      unsigned int index = timer / period;
+
+
+      digitalWrite(motorPins[i], vibrationData[NUM_INSTRUMENT][index]);
     } else {
-      digitalWrite(motorPins[i], LOW);
+      digitalWrite(motorPins[i], 0);
     }
   }
 }
@@ -313,13 +328,13 @@ void barbutton()
   }
   if ( currEditBar == 0 )
   { notes[NUM_BARS][NUM_NOTES] = notes[0][NUM_NOTES];
-   pixels1.setPixelColor(1, pixels1.Color(150,150,150 ));
-   pixels1.show();   // Send the updated pixel colors to the hardware.
+    pixels1.setPixelColor(1, pixels1.Color(150, 150, 150 ));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
 
   }
   if ( currEditBar == 1 )
   { notes[NUM_BARS][NUM_NOTES] = notes[1][NUM_NOTES];
-     pixels1.setPixelColor(1, pixels1.Color(150,150,0 ));
+    pixels1.setPixelColor(1, pixels1.Color(150, 150, 0 ));
 
   }
 }
@@ -426,4 +441,45 @@ void buttoninput()
       }
     }
   }
+}
+
+void instrumentChoice()
+{
+
+  prevmusicstate = musicstate;
+  musicstate = digitalRead(musicPin);
+  if (prevmusicstate == HIGH && musicstate == LOW) {
+    music++;   //Adds 1 to the currEditBar int on every loop
+
+  }
+  else {}
+  if (music >= NUM_INSTRUMENT) {
+    music = 0;
+  }
+  if (music == 0)
+  {
+    pixels1.setPixelColor(2, pixels.Color(57, 0, 153));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
+  }
+  if (music == 1)
+  {
+    pixels1.setPixelColor(2, pixels.Color(158, 0, 89));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
+  }
+  if (music == 2)
+  {
+    pixels1.setPixelColor(2, pixels.Color(255, 84, 0));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
+  }
+  if (music == 3)
+  {
+    pixels1.setPixelColor(2, pixels.Color(255, 189, 0));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
+  }
+  if (music == 4)
+  {
+    pixels1.setPixelColor(2, pixels.Color(194, 0, 251));
+    pixels1.show();   // Send the updated pixel colors to the hardware.
+  }
+
 }
