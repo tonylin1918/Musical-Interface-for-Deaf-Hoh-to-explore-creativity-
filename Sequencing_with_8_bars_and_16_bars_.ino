@@ -7,8 +7,23 @@ int notes[NUM_BARS][NUM_NOTES] = {
   {0, 0, 0, 0, 0, 0, 0, 0},    /*  initializers for row indexed by 0 */
   {0, 0, 0, 0, 0, 0, 0, 0}     /*  initializers for row indexed by 1 */
 };
-int LEDpins[8] = {11, 14, 17, 20, 23, 26, 29, 32};
-int butonPins[8] = {10, 13, 16, 19, 22, 25, 28, 31};
+
+
+unsigned int noteDuration [NUM_BARS][NUM_NOTES] = {
+  {180, 180, 180, 180, 180, 180, 180, 180},    /*  initializers for row indexed by 0 */
+  {180, 180, 180, 180, 180, 180, 180, 180}     /*  initializers for row indexed by 1 */
+};
+unsigned int noteTimer [NUM_BARS][NUM_NOTES] = {
+  {0, 0, 0, 0, 0, 0, 0, 0},    /*  initializers for row indexed by 0 */
+  {0, 0, 0, 0, 0, 0, 0, 0}     /*  initializers for row indexed by 1 */
+};
+unsigned int vibrationStatus [NUM_BARS][NUM_NOTES] = {
+  {0, 0, 0, 0, 0, 0, 0, 0},    /*  initializers for row indexed by 0 */
+  {0, 0, 0, 0, 0, 0, 0, 0}     /*  initializers for row indexed by 1 */
+};
+
+int LEDpins[8];
+int butonPins[8] = {10, 19, 24, 29, 34, 39, 47, 40};
 bool LEDstates[8] = {false};
 bool Bstates[8] = {false};
 bool prevBstates[8] = {false};
@@ -17,6 +32,7 @@ int currNote;
 int currBar;
 int bpm = 60;
 float period;
+int floatnumber = 60.0f;
 unsigned long countUp = 0;
 bool newStep = false;
 bool showDebug = true;
@@ -26,7 +42,7 @@ bool modebuttontate = false;
 int prevmodebuttonstate = false;
 int counter2 = 0;
 
-int barbuttonPin = 4;
+int barbuttonPin = 3;
 bool barbuttonstate = false;
 int prevbarbuttonstate = false;
 int currEditBar = 0;
@@ -42,12 +58,12 @@ unsigned long currentMillis1[8] = {0};  //some global variables available anywhe
 unsigned long startMillis1[8] = {0};  //some global variables available anywhere in the program
 int count[8] = {0};
 int index[8] = {0};
-int motorPins[8] = {12, 15, 18, 21, 24, 27, 30, 33};
- int speedperiod[NUM_BARS][NUM_NOTES] = {
+int motorPins[8] = {12, 17, 23, 28, 33, 38, 43, 14};
+int speedperiod[NUM_BARS][NUM_NOTES] = {
   {40, 40, 40, 40, 40, 40, 40, 40},    /*  initializers for row indexed by 0 */
   {40, 40, 40, 40, 40, 40, 40, 40}     /*  initializers for row indexed by 1 */
 };
- int startMillis[NUM_BARS][NUM_NOTES] = {
+int startMillis[NUM_BARS][NUM_NOTES] = {
   {0, 0, 0, 0, 0, 0, 0, 0},    /*  initializers for row indexed by 0 */
   {0, 0, 0, 0, 0, 0, 0, 0}     /*  initializers for row indexed by 1 */
 };
@@ -57,8 +73,8 @@ int motorPins[8] = {12, 15, 18, 21, 24, 27, 30, 33};
 #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
 // Which pin on the Arduino is connected to the NeoPixels?
-#define PIN        8 
-#define PIN1        9
+#define PIN        15
+#define PIN1        7
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS1 3 // Popular NeoPixel ring size
 #define NUMPIXELS 8 // Popular NeoPixel ring size
@@ -94,7 +110,6 @@ void setup() {
 }
 
 void loop() {
-
   prevmodebuttonstate = modebuttontate;
   modebuttontate = digitalRead(modebuttonpin);
   if (prevmodebuttonstate == HIGH && modebuttontate == LOW) {
@@ -111,10 +126,25 @@ void loop() {
     barbutton();
     buttoninput();
   }
+  // Play mode
   if ( counter2 == 1 )  {
+    updateBPM();
     updateTimeStep();
     updateNotes();
   }
+}
+
+void updateBPM()
+{
+ int val = analogRead(A0);
+ Serial.println (val);
+  val = map(val, 0, 1023, 60, 240);
+ bpm = val;
+
+   // calculate the period based on Beats Per Minute (BPM)
+  period = (60.0f / bpm) * 1000;
+  Serial.print("period = ");
+  Serial.println(period);
 }
 
 void updateTimeStep()
@@ -137,7 +167,7 @@ void updateTimeStep()
       Serial.print(" note: ");
       Serial.println(currNote);
     }
-  
+
   }
 
 }
@@ -160,79 +190,88 @@ void updateNotes()
     }
     newStep = false;
     lightNote();
-    playNote();
-    
+    playVibration();
+
   }
+
+  updateVibration();
 }
 void lightNote()
 {
-   if (notes[currBar][currNote] > 0){
-if (done2 == 0) {
-        { for (int i = 0; i < 8; i++) {
+  if (notes[currBar][currNote] > 0) {
+    if (done2 == 0) {
+    { for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
             pixels.clear();
           }
-        } }           done2++;            
-        }    digitalWrite(LEDpins[currNote], HIGH);
-  if (currBar == 0){
-  pixels.setPixelColor(currNote, pixels.Color(0, 150, 0 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.   
         }
-    if (currBar == 1){
-  pixels.setPixelColor(currNote, pixels.Color(150, 0, 0 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.   
+      }           done2++;
+    }    digitalWrite(LEDpins[currNote], HIGH);
+    if (currBar == 0) {
+      pixels.setPixelColor(currNote, pixels.Color(0, 150, 0 ));
+      pixels.show();   // Send the updated pixel colors to the hardware.
+    }
+    if (currBar == 1) {
+      pixels.setPixelColor(currNote, pixels.Color(150, 0, 0 ));
+      pixels.show();   // Send the updated pixel colors to the hardware.
+    }
+    done2 = 0;
   }
-done2 = 0; 
-   }
-  else {     
-           for (int i = 0; i < 8; i++) {
-          if (LEDpins[i], HIGH) {
-            digitalWrite(LEDpins[currNote], LOW);
-           pixels.clear();
+  else {
+    for (int i = 0; i < 8; i++) {
+      if (LEDpins[i], HIGH) {
+        digitalWrite(LEDpins[currNote], LOW);
+        pixels.clear();
 
-             }
-          }
-          
-        }                 
-        
- }
+      }
+    }
 
-void playNote()
-{ 
-        Serial.println(currNote);
-  if(notes[currBar][0] == 1 && LEDstates[0] == HIGH && currNote == 0) {
-        analogWrite(motorPins[0], 80);
-      }
-      else {
-        analogWrite(motorPins[0], 0);
-      }
-        if(notes[currBar][1] == 1 && LEDstates[1] == HIGH && currNote == 1) {
-        analogWrite(motorPins[1], 80);
-      }
-      else {
-        analogWrite(motorPins[1], 0);
-      }
-      
+  }
+
+}
+
+void playVibration()
+{
+if (notes[currBar][currNote] > 0) {
+  vibrationStatus[currBar][currNote] = 1;
+  noteTimer[currBar][currNote] = millis();
+}
+
+}
+
+void updateVibration()
+{
+  for(int i=0; i < NUM_NOTES; i++)
+  {
+    if((vibrationStatus[currBar][i] == 1) && (millis() - noteTimer[currBar][i] >= noteDuration[currBar][i]))
+    {
+      vibrationStatus[currBar][i] = 0;
+    } else if(vibrationStatus[currBar][i] == 1) {
+      digitalWrite(motorPins[i],HIGH);
+    } else {
+      digitalWrite(motorPins[i],LOW);
+    }
+  }  
 }
 
 
 void barbutton()
 
 // cycle thru bars
-{ 
-// Serial.print("BAR ");
-//        Serial.print(currEditBar);
-//        Serial.print(" NOTE: ");
-//        Serial.print( notes[currEditBar][0]);
-//        Serial.print( notes[currEditBar][1]);
-//        Serial.print( notes[currEditBar][2]);
-//        Serial.print( notes[currEditBar][3]);
-//        Serial.print( notes[currEditBar][4]);
-//        Serial.print( notes[currEditBar][5]);
-//        Serial.print( notes[currEditBar][6]);
-//        Serial.print( notes[currEditBar][7]);
-// Serial.println(" ");
+{
+  // Serial.print("BAR ");
+  //        Serial.print(currEditBar);
+  //        Serial.print(" NOTE: ");
+  //        Serial.print( notes[currEditBar][0]);
+  //        Serial.print( notes[currEditBar][1]);
+  //        Serial.print( notes[currEditBar][2]);
+  //        Serial.print( notes[currEditBar][3]);
+  //        Serial.print( notes[currEditBar][4]);
+  //        Serial.print( notes[currEditBar][5]);
+  //        Serial.print( notes[currEditBar][6]);
+  //        Serial.print( notes[currEditBar][7]);
+  // Serial.println(" ");
 
   prevbarbuttonstate = barbuttonstate;
   barbuttonstate = digitalRead(barbuttonPin);
@@ -258,34 +297,35 @@ void buttoninput()
 
 
 {
-  for (int i = 0; i < 8; i++) { 
+  for (int i = 0; i < 8; i++) {
 
     if (currEditBar == 0) {
       if (done == 0) {
-         for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
-   pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));  
-          pixels.show();           }
-        }  
+            pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+            pixels.show();
+          }
+        }
         done++;
       }
-       done1 = 0;
-      
-          
+      done1 = 0;
+
+
       if (notes[0][i] == 1) {
-            digitalWrite(LEDpins[i], HIGH);
-          }
-            for (int i = 0; i < 8; i++) {
-      if (butonoroff[i] == HIGH) {
-        pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.   
+        digitalWrite(LEDpins[i], HIGH);
       }
-      else {
-        pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.
+      for (int i = 0; i < 8; i++) {
+        if (butonoroff[i] == HIGH) {
+          pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
+          pixels.show();   // Send the updated pixel colors to the hardware.
+        }
+        else {
+          pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+          pixels.show();   // Send the updated pixel colors to the hardware.
+        }
       }
-    }
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -296,43 +336,46 @@ void buttoninput()
         }
       }
 
-          
+
       if (butonoroff[i] == true )
-      { 
-       
+      {
+
         notes[0][i] = 1;
-        
+
       }
       if (butonoroff[i] == false && notes[0][i] == 1 )
       {
-notes[0][i] = 0;      }
- 
+        notes[0][i] = 0;
+      }
+
     }
-  
+
     if ( currEditBar == 1 ) {
-      
+
       if (done1 == 0) {
-         for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
-   pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));  
-          pixels.show();           }
-        }           done1++;}
-                    done = 0;
-      
-           if (notes[1][i] == 1) {
-            digitalWrite(LEDpins[i], HIGH);
+            pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+            pixels.show();
           }
-         for (int i = 0; i < 8; i++) {
-      if (butonoroff1[i] == HIGH) {
-        pixels.setPixelColor(i, pixels.Color(150, 150, 0 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.   
+        }           done1++;
       }
-      else {
-        pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
-        pixels.show();   // Send the updated pixel colors to the hardware.
+      done = 0;
+
+      if (notes[1][i] == 1) {
+        digitalWrite(LEDpins[i], HIGH);
       }
-    }
+      for (int i = 0; i < 8; i++) {
+        if (butonoroff1[i] == HIGH) {
+          pixels.setPixelColor(i, pixels.Color(150, 150, 0 ));
+          pixels.show();   // Send the updated pixel colors to the hardware.
+        }
+        else {
+          pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+          pixels.show();   // Send the updated pixel colors to the hardware.
+        }
+      }
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
@@ -344,10 +387,10 @@ notes[0][i] = 0;      }
       }
       if (butonoroff1[i] == true )
       { //Serial.println("1 HIGH");
-        notes[1][i] = 1;  
+        notes[1][i] = 1;
       }
       if (butonoroff1[i] == false && notes[1][i] == 1  )
-      {      notes[1][i] = 0;
+      { notes[1][i] = 0;
       }
     }
   }
