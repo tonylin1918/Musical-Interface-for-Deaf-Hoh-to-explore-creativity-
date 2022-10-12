@@ -59,6 +59,8 @@ int done = 0;
 int done1 = 0;
 int done2 = 0;
 
+int x = 0;
+
 #define NUM_INSTRUMENT 5
 #define NUM_VALUES 11
 int vibrationData[NUM_INSTRUMENT][NUM_VALUES]  = {
@@ -280,7 +282,7 @@ void playVibration()
 void updateVibration()
 {
   for (int i = 0; i < NUM_NOTES; i++)
-  {
+{
     unsigned int timer = millis() - noteTimer[currBar][i];
     if ((vibrationStatus[currBar][i] == 1) && (timer >= noteDuration[currBar][i]))
     {
@@ -289,14 +291,15 @@ void updateVibration()
       unsigned int period = noteDuration[currBar][i] / NUM_VALUES;
 
       unsigned int index = timer / period;
-Serial.println (index);
+x = notes[currBar][currNote] - 1;
+    Serial.println (index);
 
-      digitalWrite(motorPins[i], vibrationData[NUM_INSTRUMENT][index]);
+      digitalWrite(motorPins[i], vibrationData[x][index]);
     } else {
       digitalWrite(motorPins[i], 0);
     }
-  }
-}
+  }}
+  
 
 
 void barbutton()
@@ -388,7 +391,7 @@ void buttoninput()
         notes[0][i] = 0;
       }
     }}    if (currEditBar == 1  && music == x) {
-      if (done == 1) {
+      if (done1 == 0) {
         for (int i = 0; i < 8; i++) {
           if (LEDpins[i], HIGH) {
             digitalWrite(LEDpins[i], LOW);
@@ -403,7 +406,7 @@ void buttoninput()
         digitalWrite(LEDpins[i], HIGH);
       }
       for (int i = 0; i < 8; i++) {
-        if (butonoroff[i] == HIGH) {
+        if (butonoroff1[i] == HIGH) {
           pixels.setPixelColor(i, pixels.Color(150, 150, 0 ));
           pixels.show();   // Send the updated pixel colors to the hardware.
         }
@@ -415,16 +418,16 @@ void buttoninput()
       prevBstates[i] = Bstates[i];
       Bstates[i] = digitalRead(butonPins[i]);
       if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
-        if (butonoroff) {
+        if (butonoroff1) {
           LEDstates[i] = !LEDstates[i];
           digitalWrite(LEDpins[i], LEDstates[i]);
-          butonoroff[i] = ! butonoroff[i];
+          butonoroff1[i] = ! butonoroff1[i];
         }
-      if (butonoroff[i] == true)
+      if (butonoroff1[i] == true)
       {
         notes[1][i] = x;
       }
-      if (butonoroff[i] == false && notes[1][i] == x )
+      if (butonoroff1[i] == false && notes[1][i] == x )
       {
         notes[1][i] = 0;
       }
