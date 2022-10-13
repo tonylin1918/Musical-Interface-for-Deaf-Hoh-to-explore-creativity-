@@ -62,14 +62,14 @@ int done2 = 0;
 int x = 0;
 
 #define NUM_INSTRUMENT 5
-#define NUM_VALUES 11
+#define NUM_VALUES 21
 int vibrationData[NUM_INSTRUMENT][NUM_VALUES]  = {
-  {217, 150, 115, 115, 114, 116, 119, 119, 100, 80, 80},
-  {100, 100, 255, 255, 255, 255, 100, 100, 255, 255, 255},
-  {80, 100, 120, 180, 255, 255, 100, 80, 0, 0, 0},
-  {255, 230, 200, 180, 0, 0, 0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 140, 255, 180, 120, 80 , 0, 0}
-};
+  {202, 149, 79, 74, 73, 72, 70, 68, 67, 65, 64, 62, 60, 58, 55, 53, 51, 48, 47, 16, 0},
+  {222, 222, 190, 180, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+  {0, 0, 0, 0, 0, 0, 0, 180, 200, 255, 255, 200, 180, 100, 55, 53, 51, 48, 47, 16, 0},
+  {0, 0, 0, 200, 255, 255, 200, 180, 0, 0, 0, 200, 255, 255, 200, 0, 0, 0, 255, 206, 0},
+  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 180, 190, 222, 222}
+  };
 
 unsigned long currentMillis1[8] = {0};  //some global variables available anywhere in the program
 unsigned long startMillis1[8] = {0};  //some global variables available anywhere in the program
@@ -290,7 +290,7 @@ void updateVibration()
     } else if (vibrationStatus[currBar][i] == 1) {
       unsigned int period = noteDuration[currBar][i] / NUM_VALUES;
 
-      unsigned int index = timer / period;
+      unsigned int index = (timer / period) - 2;
       x = notes[currBar][currNote] - 1;
 
       digitalWrite(motorPins[i], vibrationData[x][index]);    Serial.println (vibrationData[x][index]);
