@@ -64,8 +64,8 @@ int x = 0;
 #define NUM_INSTRUMENT 5
 #define NUM_VALUES 11
 int vibrationData[NUM_INSTRUMENT][NUM_VALUES]  = {
-  {217, 150, 115, 115, 114, 116, 119, 119, 0, 0, 0},
-  {120, 150, 255, 255, 110, 80, 100, 255, 60, 0, 0},
+  {217, 150, 115, 115, 114, 116, 119, 119, 100, 80, 80},
+  {100, 100, 255, 255, 255, 255, 100, 100, 255, 255, 255},
   {80, 100, 120, 180, 255, 255, 100, 80, 0, 0, 0},
   {255, 230, 200, 180, 0, 0, 0, 0, 0, 0, 0},
   {0, 0, 0, 0, 140, 255, 180, 120, 80 , 0, 0}
@@ -169,8 +169,8 @@ void updateBPM()
 
   // calculate the period based on Beats Per Minute (BPM)
   period = (60.0f / bpm) * 1000;
- // Serial.print("period = ");
- // Serial.println(period);
+  // Serial.print("period = ");
+  // Serial.println(period);
 }
 
 void updateTimeStep()
@@ -282,7 +282,7 @@ void playVibration()
 void updateVibration()
 {
   for (int i = 0; i < NUM_NOTES; i++)
-{
+  {
     unsigned int timer = millis() - noteTimer[currBar][i];
     if ((vibrationStatus[currBar][i] == 1) && (timer >= noteDuration[currBar][i]))
     {
@@ -291,33 +291,36 @@ void updateVibration()
       unsigned int period = noteDuration[currBar][i] / NUM_VALUES;
 
       unsigned int index = timer / period;
-x = notes[currBar][currNote] - 1;
-    Serial.println (index);
+      x = notes[currBar][currNote] - 1;
 
-      digitalWrite(motorPins[i], vibrationData[x][index]);
+      digitalWrite(motorPins[i], vibrationData[x][index]);    Serial.println (vibrationData[x][index]);
+
     } else {
       digitalWrite(motorPins[i], 0);
     }
-  }}
-  
+
+  }
+
+}
+
 
 
 void barbutton()
 
 // cycle thru bars
 {
-   Serial.print("BAR ");
-          Serial.print(currEditBar);
-          Serial.print(" NOTE: ");
-          Serial.print( notes[currEditBar][0]);
-          Serial.print( notes[currEditBar][1]);
-          Serial.print( notes[currEditBar][2]);
-          Serial.print( notes[currEditBar][3]);
-          Serial.print( notes[currEditBar][4]);
-          Serial.print( notes[currEditBar][5]);
-          Serial.print( notes[currEditBar][6]);
-          Serial.print( notes[currEditBar][7]);
-   Serial.println(" ");
+  Serial.print("BAR ");
+  Serial.print(currEditBar);
+  Serial.print(" NOTE: ");
+  Serial.print( notes[currEditBar][0]);
+  Serial.print( notes[currEditBar][1]);
+  Serial.print( notes[currEditBar][2]);
+  Serial.print( notes[currEditBar][3]);
+  Serial.print( notes[currEditBar][4]);
+  Serial.print( notes[currEditBar][5]);
+  Serial.print( notes[currEditBar][6]);
+  Serial.print( notes[currEditBar][7]);
+  Serial.println(" ");
 
   prevbarbuttonstate = barbuttonstate;
   barbuttonstate = digitalRead(barbuttonPin);
@@ -348,98 +351,100 @@ void buttoninput()
 
 {
   for (int i = 0; i < 8; i++) {
-       for (int x = 1; x <= NUM_INSTRUMENT; x++) {
-    if (currEditBar == 0  && music == x) {
-      if (done == 0) {
+    for (int x = 1; x <= NUM_INSTRUMENT; x++) {
+      if (currEditBar == 0  && music == x) {
+        if (done == 0) {
+          for (int i = 0; i < 8; i++) {
+            if (LEDpins[i], HIGH) {
+              digitalWrite(LEDpins[i], LOW);
+              pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+              pixels.show();
+            }
+          }
+          done++;
+        }
+        done1 = 0;
+        if (notes[0][i] == x) {
+          digitalWrite(LEDpins[i], HIGH);
+        }
         for (int i = 0; i < 8; i++) {
-          if (LEDpins[i], HIGH) {
-            digitalWrite(LEDpins[i], LOW);
+          if (butonoroff[i] == HIGH) {
+            pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
+            pixels.show();   // Send the updated pixel colors to the hardware.
+          }
+          else {
             pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
-            pixels.show();
+            pixels.show();   // Send the updated pixel colors to the hardware.
           }
         }
-        done++;
-      }
-      done1 = 0;
-      if (notes[0][i] == x) {
-        digitalWrite(LEDpins[i], HIGH);
-      }
-      for (int i = 0; i < 8; i++) {
-        if (butonoroff[i] == HIGH) {
-          pixels.setPixelColor(i, pixels.Color(150, 150, 150 ));
-          pixels.show();   // Send the updated pixel colors to the hardware.
-        }
-        else {
-          pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
-          pixels.show();   // Send the updated pixel colors to the hardware.
-        }
-      }
-      prevBstates[i] = Bstates[i];
-      Bstates[i] = digitalRead(butonPins[i]);
-      if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
-        if (butonoroff) {
-          LEDstates[i] = !LEDstates[i];
-          digitalWrite(LEDpins[i], LEDstates[i]);
-          butonoroff[i] = ! butonoroff[i];
-        }
-      if (butonoroff[i] == true)
-      {
-        notes[0][i] = x;
-      }
-      if (butonoroff[i] == false && notes[0][i] == x )
-      {
-        notes[0][i] = 0;
-      }
-    }}    if (currEditBar == 1  && music == x) {
-      if (done1 == 0) {
-        for (int i = 0; i < 8; i++) {
-          if (LEDpins[i], HIGH) {
-            digitalWrite(LEDpins[i], LOW);
-            pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
-            pixels.show();
+        prevBstates[i] = Bstates[i];
+        Bstates[i] = digitalRead(butonPins[i]);
+        if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
+          if (butonoroff) {
+            LEDstates[i] = !LEDstates[i];
+            digitalWrite(LEDpins[i], LEDstates[i]);
+            butonoroff[i] = ! butonoroff[i];
+          }
+          if (butonoroff[i] == true)
+          {
+            notes[0][i] = x;
+          }
+          if (butonoroff[i] == false)
+          {
+            notes[0][i] = 0;
           }
         }
-        done1++;
-      }
-      done = 0;
-      if (notes[1][i] == x) {
-        digitalWrite(LEDpins[i], HIGH);
-      }
-      for (int i = 0; i < 8; i++) {
-        if (butonoroff1[i] == HIGH) {
-          pixels.setPixelColor(i, pixels.Color(150, 150, 0 ));
-          pixels.show();   // Send the updated pixel colors to the hardware.
+      }    if (currEditBar == 1  && music == x) {
+        if (done1 == 0) {
+          for (int i = 0; i < 8; i++) {
+            if (LEDpins[i], HIGH) {
+              digitalWrite(LEDpins[i], LOW);
+              pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+              pixels.show();
+            }
+          }
+          done1++;
         }
-        else {
-          pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
-          pixels.show();   // Send the updated pixel colors to the hardware.
+        done = 0;
+        if (notes[1][i] == x) {
+          digitalWrite(LEDpins[i], HIGH);
+        }
+        for (int i = 0; i < 8; i++) {
+          if (butonoroff1[i] == HIGH) {
+            pixels.setPixelColor(i, pixels.Color(150, 150, 0 ));
+            pixels.show();   // Send the updated pixel colors to the hardware.
+          }
+          else {
+            pixels.setPixelColor(i, pixels.Color(0 , 0, 0 ));
+            pixels.show();   // Send the updated pixel colors to the hardware.
+          }
+        }
+        prevBstates[i] = Bstates[i];
+        Bstates[i] = digitalRead(butonPins[i]);
+        if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
+          if (butonoroff1) {
+            LEDstates[i] = !LEDstates[i];
+            digitalWrite(LEDpins[i], LEDstates[i]);
+            butonoroff1[i] = ! butonoroff1[i];
+          }
+          if (butonoroff1[i] == true)
+          {
+            notes[1][i] = x;
+          }
+          if (butonoroff1[i] == false)
+          {
+            notes[1][i] = 0;
+          }
         }
       }
-      prevBstates[i] = Bstates[i];
-      Bstates[i] = digitalRead(butonPins[i]);
-      if (prevBstates[i] == HIGH && Bstates[i] == LOW) {
-        if (butonoroff1) {
-          LEDstates[i] = !LEDstates[i];
-          digitalWrite(LEDpins[i], LEDstates[i]);
-          butonoroff1[i] = ! butonoroff1[i];
-        }
-      if (butonoroff1[i] == true)
-      {
-        notes[1][i] = x;
-      }
-      if (butonoroff1[i] == false && notes[1][i] == x )
-      {
-        notes[1][i] = 0;
-      }
-    }}
 
+    }
   }
-}
 }
 
 void instrumentChoice()
 {
-//Serial.println (music);
+  //Serial.println (music);
   prevmusicstate = musicstate;
   musicstate = digitalRead(musicPin);
   if (prevmusicstate == HIGH && musicstate == LOW) {
@@ -457,7 +462,7 @@ void instrumentChoice()
 
 
 
-    
+
   }
   if (music == 2)
   {
@@ -465,28 +470,28 @@ void instrumentChoice()
     pixels1.show();   // Send the updated pixel colors to the hardware.
 
 
-    
+
   }
   if (music == 3)
   {
     pixels1.setPixelColor(2, pixels.Color(255, 84, 0));
     pixels1.show();   // Send the updated pixel colors to the hardware.
 
-    
+
   }
   if (music == 4)
   {
     pixels1.setPixelColor(2, pixels.Color(255, 189, 0));
     pixels1.show();   // Send the updated pixel colors to the hardware.
 
-    
+
   }
   if (music == 5)
   {
     pixels1.setPixelColor(2, pixels.Color(194, 0, 251));
     pixels1.show();   // Send the updated pixel colors to the hardware.
 
-    
+
   }
 
 }
